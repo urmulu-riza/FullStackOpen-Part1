@@ -15,6 +15,7 @@ npm start
 ```
 
 The applicaiton runs on <http://localhost:3000>
+
 The file **_<i>index.js</i>_** looks like this
 
 ```js
@@ -42,11 +43,11 @@ export default App;
 
 The file <i>public/index.js</i> :
 
-```js
+```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      content not shown ...
+    content not shown ...
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -56,3 +57,19 @@ The file <i>public/index.js</i> :
 ```
 
 There are a few ways to define functions in JavaScript. Here we will use [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), which are described in a newer version of JavaScript known as [ECMAScript 6](http://es6-features.org/#Constants), also called ES6.
+
+The first rule of frontend web development:
+
+> <i>keep the console open all the time</i>
+
+```js
+const App = () => {
+  const now = new Date();
+  return (
+    <div>
+      <p>Hello world, it is {now.toString()}</p>
+    </div>
+  );
+};
+export default App;
+```
