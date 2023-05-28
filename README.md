@@ -219,13 +219,145 @@ The fix is ​​as follows
 
 > React also allows arrays to be rendered if the array contains values ​​that are eligible for rendering (such as numbers or strings).
 
----
+Famous software developer Robert "Uncle Bob" Martin has stated
 
-===
-part: 1
-letter: b
-===
+> <i>"The only way to go fast, is to go well"</i>
 
----
+that is, according to Martin, careful progress with small steps is even the only way to be fast.
 
-# b- Introduction to React
+**WARNING2** create-react-app automatically makes the project a git repository unless the application is created within an already existing repository. Most likely you **do not want** the project to become a repository, so run the command _rm -rf .git_ in the root of the project.
+
+# b- Javascript
+
+The official name of the JavaScript standard is [ECMAScript](https://en.wikipedia.org/wiki/ECMAScript). At this moment, the latest version is the one released in June of 2022 with the name [ECMAScript®2022](https://www.ecma-international.org/ecma-262/), otherwise known as ES13.
+
+Browsers do not yet support all of JavaScript's newest features. Due to this fact, a lot of code run in browsers has been <i>transpiled</i> from a newer version of JavaScript to an older, more compatible version.
+
+Today, the most popular way to do transpiling is by using [Babel](https://babeljs.io/).
+
+[Node.js](https://nodejs.org/en/) is a JavaScript runtime environment based on Google's [Chrome V8](https://developers.google.com/v8/) JavaScript engine and works practically anywhere - from servers to mobile phones. Let's practice writing some JavaScript using Node. The latest versions of Node already understand the latest versions of JavaScript, so the code does not need to be transpiled.
+
+Where to run Node.js:
+
+1.[JS Bin](https://jsbin.com/?js,console).
+
+2.the browser's developer tool console
+
+3.Node.js console, which is opened by typing _node_ in the command line
+
+### Variables
+
+```js
+const x = 1;
+let y = 5;
+
+console.log(x, y); // 1, 5 are printed
+y += 10;
+console.log(x, y); // 1, 15 are printed
+y = 'sometext';
+console.log(x, y); // 1, sometext are printed
+x = 4; // causes an error
+```
+
+> [const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) and [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)
+
+> The variable's data type can change during execution
+
+[var](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var). See [JavaScript Variables - Should You Use let, var or const? on Medium](https://medium.com/craft-academy/javascript-variables-should-you-use-let-var-or-const-394f7645c88f) or [Keyword: var vs. let on JS Tips](http://www.jstips.co/en/javascript/keyword-var-vs-let/) or watch [var, let and const - ES6 JavaScript Features](https://youtu.be/sjyJBL5fkp8) for more information.
+
+### Arrays
+
+```js
+const t = [1, -1, 3];
+
+t.push(5);
+
+console.log(t.length); // 4 is printed
+console.log(t[1]); // -1 is printed
+
+t.forEach((value) => {
+  console.log(value); // numbers 1, -1, 3, 5 are printed, each to own line
+});
+```
+
+Notable in this example is the fact that the contents of the array can be modified even though it is defined as a _const_. Because the array is an object, the variable always points to the same object. However, the content of the array changes as new items are added to it.
+
+forEach calls the function <i>for each of the items in the array</i>, always passing the individual item as an argument. The function as the argument of forEach may also receive [other arguments](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach).
+
+In the previous example, a new item was added to the array using the method [push](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push).
+
+When using React, techniques from functional programming are often used. One characteristic of the functional programming paradigm is the use of [immutable](https://en.wikipedia.org/wiki/Immutable_object) data structures. In React code, it is preferable to use the method [concat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat), which creates a new array with the added item. This ensures the original array remains unchanged.
+
+```js
+const m1 = t.map((value) => value * 2);
+```
+
+Based on the old array, map creates a <i>new array</i>, for which the function given as a parameter is used to create the items.
+
+```js
+const m2 = t.map((value) => '<li>' + value + '</li>');
+console.log(m2);
+// [ '<li>1</li>', '<li>2</li>', '<li>3</li>' ] is printed
+```
+
+[destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment).
+
+```js
+const t = [1, 2, 3, 4, 5];
+
+const [first, second, ...rest] = t;
+
+console.log(first, second); // 1, 2 is printed
+console.log(rest); // [3, 4, 5] is printed
+```
+
+### Objects
+
+```js
+const object3 = {
+  name: {
+    first: 'Dan',
+    last: 'Abramov',
+  },
+  grades: [2, 3, 5, 3],
+  department: 'Stanford University',
+};
+```
+
+```js
+console.log(object1.name); // Arto Hellas is printed with dot notations
+const fieldName = 'age';
+console.log(object1[fieldName]); // 35 is printed with brackets []
+```
+
+```js
+object1.address = 'Helsinki';
+object1['secret number'] = 12341;
+```
+
+The latter of the additions has to be done by using brackets because of the space.
+Naturally, objects in JavaScript can also have methods.
+
+[function declaration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function).
+
+```js
+function product(a, b) {
+  return a * b;
+}
+
+const result = product(2, 6);
+// result is now 12
+```
+
+The other way to define the function is by using a [function expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function). In this case, there is no need to give the function a name and the definition may reside among the rest of the code:
+
+```js
+const average = function (a, b) {
+  return (a + b) / 2;
+};
+
+const result = average(2, 5);
+// result is now 3.5
+```
+
+During this course, we will define all functions using the arrow syntax.
