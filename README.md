@@ -1,7 +1,7 @@
---
+---
 part: 1
 letter: a
---
+---
 
 # a- Introduction to React
 
@@ -219,9 +219,11 @@ The fix is ​​as follows
 
 > React also allows arrays to be rendered if the array contains values ​​that are eligible for rendering (such as numbers or strings).
 
---
+---
+
 part: 1
 letter: b
---
+
+---
 
 # b- Introduction to React
