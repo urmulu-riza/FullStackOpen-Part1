@@ -541,3 +541,293 @@ When one of the buttons is clicked, the event handler is executed. The event han
 **Calling a function that changes the state causes the component to rerender.** This causes its subcomponents _Display_ and _Button_ to also be re-rendered.
 
 ## 1.d Complex state
+
+```js
+const App = () => {
+  const [clicks, setClicks] = useState({
+    left: 0,
+    right: 0,
+  });
+
+  const handleLeftClick = () => {
+    const newClicks = {
+      left: clicks.left + 1,
+      right: clicks.right,
+    };
+    setClicks(newClicks);
+  };
+
+  const handleRightClick = () => {
+    const newClicks = {
+      left: clicks.left,
+      right: clicks.right + 1,
+    };
+    setClicks(newClicks);
+  };
+
+  return (
+    <div>
+      {clicks.left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {clicks.right}
+    </div>
+  );
+};
+```
+
+We can define the new state object a bit more neatly by using the [object spread](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
+syntax that was added to the language specification in the summer of 2018:
+
+```js
+const handleLeftClick = () => setClicks({ ...clicks, left: clicks.left + 1 });
+
+const handleRightClick = () =>
+  setClicks({ ...clicks, right: clicks.right + 1 });
+```
+
+> The application appears to work. However, <i>it is forbidden in React to mutate state directly</i>, since [it can result in unexpected side effects](https://stackoverflow.com/a/40309023).
+
+> Storing all of the state in a single state object is a bad choice for this particular application; There are situations where it can be beneficial to store a piece of application state in a more complex data structure. [The official React documentation](https://react.dev/learn/choosing-the-state-structure) contains some helpful guidance on the topic.
+
+### Handling arrays
+
+```js
+const App = () => {
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(0);
+  const [allClicks, setAll] = useState([]); // highlight-line
+
+  // highlight-start
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'));
+    setLeft(left + 1);
+  };
+  // highlight-end
+
+  // highlight-start
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'));
+    setRight(right + 1);
+  };
+  // highlight-end
+
+  return (
+    <div>
+      {left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {right}
+      <p>{allClicks.join(' ')}</p> // highlight-line
+    </div>
+  );
+};
+```
+
+Adding the new item to the array is accomplished with the [concat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat) method, which does not mutate the existing array but rather returns a <i>new copy of the array</i> with the item added to it.
+
+### Update of the state is asynchronous
+
+A state update in React happens [asynchronously](https://react.dev/learn/queueing-a-series-of-state-updates), i.e. not immediately but "at some point" before the component is rendered again.
+
+We can fix the app as follows:
+
+```js
+const App = () => {
+  // ...
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'));
+    const updatedLeft = left + 1;
+    setLeft(updatedLeft);
+    setTotal(updatedLeft + right);
+  };
+
+  // ...
+};
+```
+
+### Conditional Rendering
+
+The <i>History</i> component renders completely different React elements depending on the state of the application. This is called <i>conditional rendering</i>.
+
+React also offers many other ways of doing [conditional rendering](https://react.dev/learn/conditional-rendering).
+
+```js
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return <div>the app is used by pressing the buttons</div>;
+  }
+
+  return <div>button press history: {props.allClicks.join(' ')}</div>;
+};
+
+// highlight-start
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
+);
+// highlight-end
+
+const App = () => {
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(0);
+  const [allClicks, setAll] = useState([]);
+
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'));
+    setLeft(left + 1);
+  };
+
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'));
+    setRight(right + 1);
+  };
+
+  return (
+    <div>
+      {left}
+      // highlight-start
+      <Button handleClick={handleLeftClick} text="left" />
+      <Button handleClick={handleRightClick} text="right" />
+      // highlight-end
+      {right}
+      <History allClicks={allClicks} />
+    </div>
+  );
+};
+```
+
+### Debugging React applications
+
+A large part of a typical developer's time is spent on debugging and reading existing code. Every now and then we do get to write a line or two of new code, but a large part of our time is spent trying to figure out why something is broken or how something works. Good practices and tools for debugging are extremely important for this reason.
+
+**NB** When you use _console.log_ for debugging, don't combine _objects_ in a Java-like fashion by using the plus operator:
+
+```js
+console.log('props value is ' + props);
+```
+
+If you do that, you will end up with a rather uninformative log message:
+
+```js
+props value is [object Object]
+```
+
+Instead, separate the things you want to log to the console with a comma:
+
+```js
+console.log('props value is', props);
+```
+
+In this way, the separated items will all be available in the browser console for further inspection.
+
+You can pause the execution of your application code in the Chrome developer console's <i>debugger</i>, by writing the command [debugger](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger) anywhere in your code.
+
+The execution will pause once it arrives at a point where the _debugger_ command gets executed.
+
+You can also access the debugger without the _debugger_ command by adding breakpoints in the <i>Sources</i> tab. Inspecting the values of the component's variables can be done in the _Scope_-section:
+
+It is highly recommended to add the [React developer tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension to Chrome. It adds a new _Components_ tab to the developer tools. The new developer tools tab can be used to inspect the different React elements in the application, along with their state and props:
+
+### Rules of Hooks
+
+The _useState_ function (as well as the _useEffect_ function introduced later on in the course) <i>must not be called</i> from inside of a loop, a conditional expression, or any place that is not a function defining a component. This must be done to ensure that the hooks are always called in the same order, and if this isn't the case the application will behave erratically.
+
+To recap, hooks may only be called from the inside of a function body that defines a React component:
+
+### Event Handling Revisited
+
+```js
+<button onClick={console.log('clicked the button')}>button</button>
+```
+
+The message gets printed to the console once when the component is rendered but nothing happens when we click the button. Why does this not work even when our event handler contains a function _console.log_?
+
+The issue here is that our event handler is defined as a <i>function call</i> which means that the event handler is assigned the returned value from the function, which in the case of _console.log_ is <i>undefined</i>.
+
+The _console.log_ function call gets executed when the component is rendered and for this reason, it gets printed once to the console.
+
+### A function that returns a function
+
+```js
+const App = () => {
+  const [value, setValue] = useState(10);
+
+  // highlight-start
+  const hello = (who) => () => {
+    console.log('hello', who);
+  };
+  // highlight-end
+
+  return (
+    <div>
+      {value}
+      <button onClick={hello()}>button</button>
+    </div>
+  );
+};
+```
+
+We can use the same trick to define event handlers that set the state of the component to a given value. Let's make the following changes to our code:
+
+```js
+const App = () => {
+  const [value, setValue] = useState(10);
+
+  // highlight-start
+  const setToValue = (newValue) => () => {
+    console.log('value now', newValue); // print the new value to console
+    setValue(newValue);
+  };
+  // highlight-end
+
+  return (
+    <div>
+      {value}
+      // highlight-start
+      <button onClick={setToValue(1000)}>thousand</button>
+      <button onClick={setToValue(0)}>reset</button>
+      <button onClick={setToValue(value + 1)}>increment</button>
+      // highlight-end
+    </div>
+  );
+};
+```
+
+Using functions that return functions is not required to achieve this functionality. Let's return the _setToValue_ function which is responsible for updating state into a normal function:
+
+```js
+const App = () => {
+  const [value, setValue] = useState(10);
+
+  const setToValue = (newValue) => {
+    console.log('value now', newValue);
+    setValue(newValue);
+  };
+
+  return (
+    <div>
+      {value}
+      <button onClick={() => setToValue(1000)}>thousand</button>
+      <button onClick={() => setToValue(0)}>reset</button>
+      <button onClick={() => setToValue(value + 1)}>increment</button>
+    </div>
+  );
+};
+```
+
+Choosing between the two presented ways of defining your event handlers is mostly a matter of taste.
+
+### Passing Event Handlers to Child Components
+
+Easy
+
+### Do Not Define Components Within Components
+
+> Never define components inside of other components. The method provides no benefits and leads to many unpleasant problems. The biggest problems are because React treats a component defined inside of another component as a new component in every render. This makes it impossible for React to optimize the component.
+
+### Useful Reading
+
+The internet is full of React-related material. However, we use the new style of React for
+
+- The [official React documentation](https://react.dev/learn) is worth checking out at some point, although most of it will become relevant only later on in the course. Also, everything related to class-based components is irrelevant to us;
+- Some courses on [Egghead.io](https://egghead.io) like [Start learning React](https://egghead.io/courses/start-learning-react) are of high quality, and the recently updated [Beginner's Guide to React](https://egghead.io/courses/the-beginner-s-guide-to-reactjs) is also relatively good; both courses introduce concepts that will also be introduced later on in this course. **NB** The first one uses class components but the latter uses the new functional ones.
