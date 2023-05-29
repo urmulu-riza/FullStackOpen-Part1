@@ -432,3 +432,112 @@ setInterval(() => {
 ```
 
 ### Stateful component
+
+```js
+import { useState } from 'react'; // highlight-line
+
+const App = () => {
+  const [counter, setCounter] = useState(0); // highlight-line
+
+  // highlight-start
+  setTimeout(() => setCounter(counter + 1), 1000);
+  // highlight-end
+
+  return <div>{counter}</div>;
+};
+
+export default App;
+```
+
+The function call adds <i>state</i> to the component and renders it initialized with the value of zero. The function returns an array that contains two items. We assign the items to the variables _counter_ and _setCounter_ by using the destructuring assignment syntax shown earlier.
+
+The _counter_ variable is assigned the initial value of <i>state</i> which is zero. The variable _setCounter_ is assigned a function that will be used to <i>modify the state</i>.
+
+The application calls the [setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) function and passes it two parameters: a function to increment the counter state and a timeout of one second.
+
+The function passed as the first parameter to the _setTimeout_ function is invoked one second after calling the _setTimeout_ function
+
+When the state modifying function _setCounter_ is called, <i>React re-renders the component</i> which means that the function body of the component function gets re-executed:
+
+The second time the component function is executed it calls the _useState_ function and returns the new value of the state: 1. Executing the function body again also makes a new function call to _setTimeout_, which executes the one-second timeout and increments the _counter_ state again. Because the value of the _counter_ variable is 1, incrementing the value by 1 is essentially the same as an expression setting the value of _counter_ to 2.
+
+Every time the _setCounter_ modifies the state it causes the component to re-render. The value of the state will be incremented again after one second, and this will continue to repeat for as long as the application is running.
+
+### Event handling
+
+```js
+const App = () => {
+  const [counter, setCounter] = useState(0);
+
+  // highlight-start
+  const handleClick = () => {
+    console.log('clicked');
+  };
+  // highlight-end
+
+  return (
+    <div>
+      <div>{counter}</div>
+      // highlight-start
+      <button onClick={handleClick}>plus</button>
+      // highlight-end
+    </div>
+  );
+};
+```
+
+### An event handler is a function
+
+An event handler is supposed to be either a <i>function</i> or a <i>function reference</i>, and when we write:
+
+```js
+<button onClick={setCounter(counter + 1)}>
+```
+
+the event handler is actually a <i>function call</i>. In many situations this is ok, but not in this particular situation. In the beginning, the value of the <i>counter</i> variable is 0. When React renders the component for the first time, it executes the function call <em>setCounter(0+1)</em>, and changes the value of the component's state to 1.
+This will cause the component to be re-rendered, React will execute the setCounter function call again, and the state will change leading to another rerender...
+
+> Usually defining event handlers within JSX-templates is not a good idea.
+
+### Passing state - to child components
+
+It's recommended to write React components that are small and reusable across the application and even across projects.
+
+One best practice in React is to [lift the state up](https://react.dev/learn/sharing-state-between-components) in the component hierarchy. The documentation says:
+
+> <i>Often, several components need to reflect the same changing data. We recommend lifting the shared state up to their closest common ancestor.</i>
+
+```js
+const App = () => {
+  const [counter, setCounter] = useState(0);
+
+  const increaseByOne = () => setCounter(counter + 1);
+  //highlight-start
+  const decreaseByOne = () => setCounter(counter - 1);
+  //highlight-end
+  const setToZero = () => setCounter(0);
+
+  return (
+    <div>
+      <Display counter={counter} />
+      // highlight-start
+      <Button handleClick={increaseByOne} text="plus" />
+      <Button handleClick={setToZero} text="zero" />
+      <Button handleClick={decreaseByOne} text="minus" />
+      // highlight-end
+    </div>
+  );
+};
+```
+
+### Changes in state cause rerendering
+
+How application works:
+
+When the application starts, the code in _App_ is executed. This code uses a [useState](https://react.dev/reference/react/useState) hook to create the application state, setting an initial value of the variable _counter_.
+This component contains the _Display_ component - which displays the counter's value, 0 - and three _Button_ components. The buttons all have event handlers, which are used to change the state of the counter.
+
+When one of the buttons is clicked, the event handler is executed. The event handler changes the state of the _App_ component with the _setCounter_ function.
+**Calling a function that changes the state causes the component to rerender.** This causes its subcomponents _Display_ and _Button_ to also be re-rendered.
+
+## 1.d Complex state
