@@ -3,7 +3,7 @@ part: 1
 letter: a
 ---
 
-# a- Introduction to React
+## a- Introduction to React
 
 You may use the new generation frontend tool [Vite](https://vitejs.dev/) or the default tool [create-react-app](https://github.com/facebook/create-react-app) to get started.
 
@@ -227,7 +227,7 @@ that is, according to Martin, careful progress with small steps is even the only
 
 **WARNING2** create-react-app automatically makes the project a git repository unless the application is created within an already existing repository. Most likely you **do not want** the project to become a repository, so run the command _rm -rf .git_ in the root of the project.
 
-# b- Javascript
+## b- Javascript
 
 The official name of the JavaScript standard is [ECMAScript](https://en.wikipedia.org/wiki/ECMAScript). At this moment, the latest version is the one released in June of 2022 with the name [ECMAScript®2022](https://www.ecma-international.org/ecma-262/), otherwise known as ES13.
 
@@ -361,3 +361,74 @@ const result = average(2, 5);
 ```
 
 During this course, we will define all functions using the arrow syntax.
+
+###[Object methods and "this"](https://fullstackopen.com/en/part1/java_script#object-methods-and-this)
+
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  greet() {
+    console.log('hello, my name is ' + this.name);
+  }
+}
+
+const adam = new Person('Adam Ondra', 29);
+adam.greet();
+
+const janja = new Person('Janja Garnbret', 23);
+janja.greet();
+```
+
+At the core, they are still objects based on JavaScript's [prototypal inheritance](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Inheritance). The type of both objects is actually _Object_, since JavaScript essentially only defines the types [Boolean, Null, Undefined, Number, String, Symbol, BigInt, and Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
+
+The introduction of the class syntax was a controversial addition. Check out [Not Awesome: ES6 Classes](https://github.com/petsel/not-awesome-es6-classes) or [Is “Class” In ES6 The New “Bad” Part? on Medium](https://medium.com/@rajaraodv/is-class-in-es6-the-new-bad-part-6c4e6fe1ee65).
+
+### JavaScript materials
+
+There exist both good and poor guides for JavaScript on the Internet. Most of the links on this page relating to JavaScript features reference [Mozilla's JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript).
+
+It is highly recommended to immediately read [A re-introduction to JavaScript (JS tutorial)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript) on Mozilla's website.
+
+If you wish to get to know JavaScript deeply there is a great free book series on the Internet called [You-Dont-Know-JS](https://github.com/getify/You-Dont-Know-JS).
+
+Another great resource for learning JavaScript is [javascript.info](https://javascript.info).
+
+The free and highly engaging book [Eloquent JavaScript](https://eloquentjavascript.net) takes you from the basics to interesting stuff quickly. It is a mixture of theory projects and exercises and covers general programming theory as well as the JavaScript language.
+
+[Namaste 🙏 JavaScript](https://www.youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP) is another great and highly recommended free JavaScript tutorial in order to understand how JS works under the hood. Namaste JavaScript is a pure in-depth JavaScript course released for free on YouTube. It will cover the core concepts of JavaScript in detail and everything about how JS works behind the scenes inside the JavaScript engine.
+
+[egghead.io](https://egghead.io) has plenty of quality screencasts on JavaScript, React, and other interesting topics. Unfortunately, some of the material is behind a paywall.
+
+## c- Component state, event handlers
+
+allows us to [destructure](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) values from objects and arrays upon assignment.
+
+### Page re-rendering
+
+Counter with props:
+
+```js
+export default App = ({ counter }) => <div>{counter}</div>;
+```
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+let counter = 1;
+const refresh = () => {
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <App counter={counter} />
+  );
+};
+setInterval(() => {
+  refresh();
+  counter += 1;
+}, 1000);
+```
+
+### Stateful component
