@@ -13,6 +13,12 @@ const anecdotes = [
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
+const Anecdote = ({ anecdote, votes }) => (
+  <>
+    <p>{anecdote}</p>
+    <p>Has {votes} votes</p>
+  </>
+);
 
 const App = () => {
   const rand = () => Math.floor(Math.random() * anecdotes.length);
@@ -42,8 +48,7 @@ const App = () => {
   return (
     <div>
       <h1>Anecdote of the day</h1>
-      <p>{anecdotes[selected]}</p>
-      <p>Has {vote[selected]} votes</p>
+      <Anecdote votes={vote[selected]} anecdote={anecdotes[selected]} />
       <Button handleClick={() => handleClick('next')} text={'next'} />
       <Button handleClick={() => handleClick('vote')} text={'vote'} />
 
@@ -51,10 +56,7 @@ const App = () => {
       {!maxVote ? (
         <p>No votes submitted yet</p>
       ) : (
-        <>
-          <p>{anecdotes[maxInd]}</p>
-          <p>has {maxVote} votes</p>
-        </>
+        <Anecdote votes={maxVote} anecdote={anecdotes[maxInd]} />
       )}
     </div>
   );
