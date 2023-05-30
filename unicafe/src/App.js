@@ -2,6 +2,7 @@ import { useState } from 'react';
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
+
 const Statistics = ({ good, bad, neutral }) => {
   const total = bad + good + neutral;
   return (
