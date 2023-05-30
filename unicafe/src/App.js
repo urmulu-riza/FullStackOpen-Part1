@@ -3,34 +3,53 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 const StatisticLine = ({ text, value }) => (
-  <p>
-    {text} {value}
-  </p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 );
 const Statistics = ({ good, bad, neutral }) => {
   const total = bad + good + neutral;
   return (
     <>
-      <h2>statistics</h2>
-      <StatisticLine text="good" value={good} />
-      <StatisticLine text="neutral" value={neutral} />
-      <StatisticLine text="bad" value={bad} />
-
-      {total > 0 ? (
-        <>
-          <StatisticLine text="all" value={total} />
-          <StatisticLine
-            text="average"
-            value={((good - bad) / total).toFixed(2)}
+      <table>
+        <caption>statistics</caption>
+        <colgroup>
+          <col />
+          <col
+            style={{
+              backgroundColor:
+                total === 0
+                  ? 'lightgrey'
+                  : good / total > 0.5
+                  ? 'lightgreen'
+                  : 'red',
+            }}
           />
-          <StatisticLine
-            text="positive"
-            value={`${((good * 100) / total).toFixed(2)}%`}
-          />
-        </>
-      ) : (
-        <p>No feedback given</p>
-      )}
+        </colgroup>
+        <tbody>
+          <StatisticLine text="good" value={good} />
+          <StatisticLine text="neutral" value={neutral} />
+          <StatisticLine text="bad" value={bad} />
+          {total > 0 ? (
+            <>
+              <StatisticLine text="all" value={total} />
+              <StatisticLine
+                text="average"
+                value={((good - bad) / total).toFixed(2)}
+              />
+              <StatisticLine
+                text="positive"
+                value={`${((good * 100) / total).toFixed(2)}%`}
+              />
+            </>
+          ) : (
+            <tr>
+              <td>No feedback given</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </>
   );
 };
@@ -63,7 +82,7 @@ const App = () => {
         />
         <Button
           handleClick={() => {
-            setFeedback(' ');
+            setFeedback('bad');
           }}
           text="bad"
         />
