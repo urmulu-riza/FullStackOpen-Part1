@@ -18,7 +18,9 @@ const Statistics = ({ good, bad, neutral }) => {
           <p>average {((good - bad) / total).toFixed(2)}</p>
           <p>positive {((good * 100) / total).toFixed(2)}%</p>
         </>
-      ) : undefined}
+      ) : (
+        <p>No feedback given</p>
+      )}
     </>
   );
 };
